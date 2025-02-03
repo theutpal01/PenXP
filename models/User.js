@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
-const bcrypt = require("bcryptjs");
 
 const UserSchema = new mongoose.Schema({
 	username: {
@@ -104,11 +103,6 @@ const UserSchema = new mongoose.Schema({
 
 // **Pre-Save Hooks**
 UserSchema.pre("save", async function (next) {
-	// Hash password before saving
-	if (this.isModified("password")) {
-		this.password = await bcrypt.hash(this.password, 10);
-	}
-
 	// Ensure username is unique
 	const existingUser = await this.constructor.findOne({
 		username: this.username,

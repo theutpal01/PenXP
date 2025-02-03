@@ -1,21 +1,18 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const dotenv = require("dotenv");
+require("dotenv").config()
 const validator = require("validator");
 const User = require("../models/User");
 
-dotenv.config();
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET;
-
 /**
  * ✅ Register User (Now Includes First & Last Name)
  */
 router.post("/register", async (req, res) => {
 	try {
-		const { firstName, lastName, username, email, password, isOAuthUser } =
-			req.body;
+		const { firstName, lastName, username, email, password, isOAuthUser } = req.body;
 
 		if (
 			!firstName ||
@@ -24,12 +21,10 @@ router.post("/register", async (req, res) => {
 			!email ||
 			(!isOAuthUser && !password)
 		) {
-			return res
-				.status(400)
-				.json({
-					error:
-						"First name, last name, username, email, and password (if not OAuth) are required.",
-				});
+			return res.status(400).json({
+				error:
+					"First name, last name, username, email, and password (if not OAuth) are required.",
+			});
 		}
 
 		if (!validator.isEmail(email)) {
@@ -42,24 +37,22 @@ router.post("/register", async (req, res) => {
 				.status(400)
 				.json({ error: "Username or email already exists." });
 		}
-
+		const salt = await bcrypt.genSalt(10);
 		const newUser = new User({
 			firstName,
 			lastName,
 			username,
 			email,
 			isOAuthUser,
-			password: isOAuthUser ? undefined : await bcrypt.hash(password, 10),
+			password: isOAuthUser ? undefined : await bcrypt.hash(password.trim(), salt),
 			profileCompleted: false, // User still needs to complete optional details
 		});
 
 		await newUser.save();
-		res
-			.status(201)
-			.json({
-				message: "User registered. You can now complete your profile.",
-				userId: newUser._id,
-			});
+		res.status(201).json({
+			message: "User registered. You can now complete your profile.",
+			userId: newUser._id,
+		});
 	} catch (err) {
 		res.status(500).json({ error: err.message });
 	}
@@ -94,6 +87,8 @@ router.post("/complete-profile", async (req, res) => {
  */
 router.post("/login", async (req, res) => {
 	try {
+		console.log(JWT_SECRET);
+
 		const { email, password } = req.body;
 		if (!email || !password) {
 			return res
@@ -102,13 +97,17 @@ router.post("/login", async (req, res) => {
 		}
 
 		const user = await User.findOne({ email });
+		console.log(user);
 		if (!user || user.isOAuthUser) {
 			return res
 				.status(400)
 				.json({ error: "Invalid credentials or use OAuth login." });
 		}
 
-		const isMatch = await bcrypt.compare(password, user.password);
+		const isMatch = await bcrypt.compare(password.trim(), user.password.trim());
+		console.log("Password:", password); // Log the plain password
+		console.log("Hashed Password:", user.password, isMatch); // Log the stored hash
+
 		if (!isMatch)
 			return res.status(400).json({ error: "Invalid credentials." });
 
@@ -136,12 +135,10 @@ router.post("/oauth-login", async (req, res) => {
 	try {
 		const { email, username, firstName, lastName } = req.body;
 		if (!email || !username || !firstName || !lastName) {
-			return res
-				.status(400)
-				.json({
-					error:
-						"Email, username, first name, and last name are required for OAuth login.",
-				});
+			return res.status(400).json({
+				error:
+					"Email, username, first name, and last name are required for OAuth login.",
+			});
 		}
 
 		let user = await User.findOne({ email });
