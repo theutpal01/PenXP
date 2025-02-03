@@ -45,7 +45,7 @@ git clone https://github.com/theutpal01/PenXP.git
 Navigate to the project folder and install the required dependencies:
 
 ```bash
-cd penxp-backend
+cd penxp
 npm install
 ```
 
