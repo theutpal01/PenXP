@@ -37,7 +37,7 @@ To get the server up and running locally, follow these steps:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/penxp-backend.git
+git clone https://github.com/theutpal01/PenXP.git
 ```
 
 ### 2. Install Dependencies
