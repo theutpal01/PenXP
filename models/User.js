@@ -25,9 +25,12 @@ const UserSchema = new mongoose.Schema({
 	},
 	password: {
 		type: String,
-		required: [true, "Password is required"],
+		required: function () {
+			return !this.isOAuthUser;
+		},
 		minlength: [8, "Password must be at least 8 characters long"],
 	},
+	isOAuthUser: { type: Boolean, default: false }, // Marks if user registered via OAuth
 
 	// Profile Details
 	firstName: {
@@ -95,6 +98,7 @@ const UserSchema = new mongoose.Schema({
 	followers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
 	following: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
 
+	profileCompleted: { type: Boolean, default: false }, // Track profile completion
 	createdAt: { type: Date, default: Date.now },
 });
 
