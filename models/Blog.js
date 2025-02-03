@@ -36,6 +36,8 @@ const BlogSchema = new mongoose.Schema({
 	// Engagement Tracking
 	likes: { type: Number, default: 0, min: [0, "Likes cannot be negative"] },
 	views: { type: Number, default: 0, min: [0, "Views cannot be negative"] },
+	likedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+	viewedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
 	comments: [
 		{
 			user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },

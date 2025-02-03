@@ -57,17 +57,27 @@ router.post("/:blogId/like", async (req, res) => {
 
 		if (!blog) return res.status(404).json({ error: "Blog not found." });
 
+		// Check if user already liked this blog
+		if (blog.likedBy.includes(userId)) {
+			return res
+				.status(400)
+				.json({ error: "You have already liked this blog" });
+		}
+
+		// If not liked yet, increment likes and record user
+		blog.likedBy.push(userId);
 		blog.likes += 1;
 		await blog.save();
 
-		const xpEarned = calculateXP("Liked Post");
-		if (validateXP("Liked Post", xpEarned)) {
+		// Award XP to Author
+		const xpEarned = calculateXP("Like Reveived");
+		if (validateXP("Like Reveived", xpEarned)) {
 			await XP.create({
-				user: userId,
-				action: "Liked Post",
+				user: blog.author,
+				action: "Like Reveived",
 				xpGained: xpEarned,
 			});
-			await User.findByIdAndUpdate(userId, { $inc: { xp: xpEarned } });
+			await User.findByIdAndUpdate(blog.author, { $inc: { xp: xpEarned } });
 		}
 
 		res.json({ message: "Blog liked!", likes: blog.likes });
@@ -76,7 +86,7 @@ router.post("/:blogId/like", async (req, res) => {
 	}
 });
 
-// Comment on a Blog & Award XP
+// Comment on a Blog & Award XP To both Author and User
 router.post("/:blogId/comment", async (req, res) => {
 	try {
 		const { userId, message } = req.body;
@@ -101,6 +111,18 @@ router.post("/:blogId/comment", async (req, res) => {
 			});
 		}
 
+		const xpEarnedForAuthor = calculateXP("Comment Received");
+		if (validateXP("Comment Received", xpEarnedForAuthor)) {
+			await XP.create({
+				user: blog.author,
+				action: "Comment Received",
+				xpGained: xpEarnedForAuthor,
+			});
+			await User.findByIdAndUpdate(blog.author, {
+				$inc: { xp: xpEarnedForAuthor },
+			});
+		}
+
 		res.json({ message: "Comment added!", comments: blog.comments });
 	} catch (err) {
 		res.status(500).json({ error: err.message });
@@ -110,14 +132,20 @@ router.post("/:blogId/comment", async (req, res) => {
 // Get a Single Blog Post (Increments Views)
 router.get("/:blogId", async (req, res) => {
 	try {
+		const { userId } = req.body;
+
 		const blog = await Blog.findById(req.params.blogId).populate(
 			"author",
 			"username"
 		);
 		if (!blog) return res.status(404).json({ error: "Blog not found." });
 
-		blog.views += 1;
-		await blog.save();
+		// Check if user has viewed before
+		if (!blog.viewedBy.includes(userId)) {
+			blog.views += 1;
+			blog.viewedBy.push(userId);
+			await blog.save();
+		}
 
 		res.json(blog);
 	} catch (err) {

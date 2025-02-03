@@ -11,7 +11,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 /**
- * ✅ Generate Blog Title Based on Keywords
+ * Generate Blog Title Based on Keywords
  */
 router.post("/generate-title", async (req, res) => {
 	try {
@@ -22,7 +22,7 @@ router.post("/generate-title", async (req, res) => {
 				.json({ error: "At least 3 keywords are required." });
 		}
 
-		const prompt = `Generate a catchy blog title using these keywords: ${keywords.join(
+		const prompt = `provide json of an array of catchy blog titles using the following keywords without giving extra information and prefixes: ${keywords.join(
 			", "
 		)}`;
 
@@ -37,7 +37,7 @@ router.post("/generate-title", async (req, res) => {
 });
 
 /**
- * ✅ Enhance Blog Content with AI
+ * WEnhance Blog Content with AI
  */
 router.post("/enhance-content", async (req, res) => {
 	try {
@@ -48,7 +48,7 @@ router.post("/enhance-content", async (req, res) => {
 				.json({ error: "Content must be at least 50 characters long." });
 		}
 
-		const prompt = `Improve and refine the following blog content, making it more engaging and readable:\n\n${content}`;
+		const prompt = `Improve and refine the following blog content, making it more engaging and readable and don't give any prefixes or conculsions only to the point answer:\n\n${content}`;
 
 		const result = await model.generateContent(prompt);
 		const response = await result.response;
@@ -61,7 +61,7 @@ router.post("/enhance-content", async (req, res) => {
 });
 
 /**
- * ✅ Summarize Blog Content
+ * Summarize Blog Content
  */
 router.post("/summarize", async (req, res) => {
 	try {
@@ -75,7 +75,7 @@ router.post("/summarize", async (req, res) => {
 				});
 		}
 
-		const prompt = `Summarize the following blog content in a concise and clear way:\n\n${content}`;
+		const prompt = `Summarize the following blog content in a concise and clear way without any prefixes and conclusions:\n\n${content}`;
 
 		const result = await model.generateContent(prompt);
 		const response = await result.response;

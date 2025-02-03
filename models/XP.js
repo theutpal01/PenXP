@@ -12,8 +12,9 @@ const XPSchema = new mongoose.Schema({
 		enum: [
 			"New Blog Post",
 			"Commented",
+			"Comment Received",
 			"Reviewed",
-			"Liked Post",
+			"Like Received",
 			"Blog Shared",
 			"Daily Login",
 			"Challenge Completed",

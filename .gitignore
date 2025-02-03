@@ -5,6 +5,7 @@ logs
 npm-debug.log*
 lerna-debug.log*
 .pnpm-debug.log*
+.vscode
 
 # Runtime data
 pids

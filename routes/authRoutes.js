@@ -8,7 +8,7 @@ const User = require("../models/User");
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET;
 /**
- * ✅ Register User (Now Includes First & Last Name)
+ * Register User (Now Includes First & Last Name)
  */
 router.post("/register", async (req, res) => {
 	try {
@@ -59,7 +59,7 @@ router.post("/register", async (req, res) => {
 });
 
 /**
- * ✅ Complete Optional Profile
+ * Complete Optional Profile
  */
 router.post("/complete-profile", async (req, res) => {
 	try {
@@ -129,7 +129,7 @@ router.post("/login", async (req, res) => {
 });
 
 /**
- * ✅ OAuth Login (Google)
+ * OAuth Login (Google)
  */
 router.post("/oauth-login", async (req, res) => {
 	try {

@@ -1,8 +1,9 @@
 const xpTable = {
 	"New Blog Post": 20,
-	"Commented": 5,
+	"Commented": 2,
+	"Comment Received": 5,
 	"Reviewed": 10,
-	"Liked Post": 2,
+	"Like Received": 2,
 	"Blog Shared": 10,
 	"Daily Login": 5,
 	"Challenge Completed": 50,
