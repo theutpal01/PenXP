@@ -13,13 +13,17 @@ const app = express();
 connectDB(); // Connect to MongoDB
 
 app.use(express.json());
-app.use(cors());
+app.use(
+	cors({
+		origin: process.env.DOMAIN_NAME, // Replace with your frontend URL
+		credentials: true, // if you need to send cookies, etc.
+	})
+);
 
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/blogs", blogRoutes);
 app.use("/api/ai", aiRoutes);
-
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

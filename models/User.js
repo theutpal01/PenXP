@@ -96,6 +96,10 @@ const UserSchema = new mongoose.Schema({
 	},
 	followers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
 	following: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+	isVerified: { type: Boolean, default: false },
+	verificationToken: { type: String },
+	resetPasswordToken: { type: String },
+	resetPasswordExpires: { type: Date },
 
 	profileCompleted: { type: Boolean, default: false }, // Track profile completion
 	createdAt: { type: Date, default: Date.now },
